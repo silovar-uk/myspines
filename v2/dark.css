@@ -1,0 +1,22 @@
+@media (prefers-color-scheme: dark) {
+  .outline-panel,
+  .manuscript-panel,
+  .structure-tree-card,
+  .selection-panel { border-color: var(--line); }
+  .sidebar-label,
+  .outline-label,
+  .field-label,
+  .library-hero p:not(.eyebrow),
+  .library-title { color: var(--ink); }
+  .outline-row:hover { border-color: var(--line); background: var(--surface-solid); }
+  .outline-row.is-selected,
+  .option-card:has(input:checked) { border-color: #7b4e3c; background: #443127; }
+  .node-body:empty::before,
+  .node-heading::placeholder { color: var(--faint); }
+  .text-input,
+  .textarea,
+  .select-input { border-color: var(--line); color: var(--ink); background: var(--surface-solid); }
+  .preview-box { color: var(--ink); }
+  .library-item { border-color: var(--line); }
+  .library-item:hover { border-color: var(--line-strong); }
+}
