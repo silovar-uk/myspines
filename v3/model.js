@@ -49,4 +49,28 @@ function normalizeBook(raw) {
   };
 }
 
+// Why not keep the v1 row selector: UI v3 separates navigation and manipulation,
+// so structural focus can land on either the table row or the sidebar map.
+function restoreFocus(snapshot) {
+  if (!snapshot) return;
+  requestAnimationFrame(() => {
+    const escapedId = CSS.escape(snapshot.nodeId);
+    const selector = snapshot.field === "heading"
+      ? `.node-heading[data-node-id="${escapedId}"]`
+      : snapshot.field === "body"
+        ? `.node-body[data-node-id="${escapedId}"]`
+        : `:where(.structure-title-cell, .outline-label, .sidebar-label)[data-node-id="${escapedId}"]`;
+    const element = document.querySelector(selector);
+    if (!element) return;
+    element.focus({ preventScroll: true });
+    if (snapshot.field === "heading") {
+      const position = Math.min(snapshot.offset, element.value.length);
+      element.setSelectionRange(position, position);
+    } else if (snapshot.field === "body") {
+      setCaretOffset(element, snapshot.offset);
+    }
+    element.scrollIntoView({ block: "center", behavior: "auto" });
+  });
+}
+
 state.paragraphMenuNodeId ??= null;
