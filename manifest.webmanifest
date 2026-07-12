@@ -1,0 +1,17 @@
+{
+  "name": "myspines",
+  "short_name": "myspines",
+  "description": "本の背骨を、急かさず育てる静かな編集机。",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f7f5f0",
+  "theme_color": "#f7f5f0",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
