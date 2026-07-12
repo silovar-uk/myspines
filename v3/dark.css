@@ -1,0 +1,31 @@
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --page: #1e1f1f;
+    --surface: #292a29;
+    --surface-muted: #343531;
+    --surface-subtle: #30312f;
+    --ink: #efeee9;
+    --muted: #aaa79f;
+    --faint: #85827b;
+    --line: #494a46;
+    --line-strong: #5b5b56;
+    --accent: #d47d56;
+    --accent-hover: #e08a63;
+    --accent-soft: #4b342a;
+    --danger: #e18b82;
+    --danger-soft: #4c2c2a;
+    --shadow: 0 14px 38px rgba(0, 0, 0, 0.36);
+  }
+  .secondary-button { color: var(--ink); background: #373834; }
+  .manuscript { color: #e8e6df; }
+  .sidebar-label,
+  .structure-title-cell,
+  .structure-title,
+  .library-title { color: var(--ink); }
+  .structure-row.is-selected { background: #443127; }
+  .save-error { color: #ffd2ce; border-color: #6f3935; background: #442826; }
+  .text-input,
+  .textarea,
+  .select-input { border-color: var(--line); color: var(--ink); background: var(--surface); }
+}
