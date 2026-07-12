@@ -1,10 +1,10 @@
 {
   "name": "myspines",
   "private": true,
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "scripts": {
-    "check": "node --check core.js && node --check commands.js && node --check editor.js && node --check bootstrap.js && node --check v2/model.js && node --check v2/ui-shell.js && node --check v2/ui-structure.js && node --check v2/library.js && node --check v2/transfer-import.js && node --check v2/transfer-copy.js && node --check v2/events.js && node tests/smoke.mjs",
+    "check": "node --check core.js && node --check commands.js && node --check editor.js && node --check bootstrap.js && node --check v3/model.js && node --check v3/ui-shell.js && node --check v3/ui-structure.js && node --check v2/library.js && node --check v2/transfer-import.js && node --check v2/transfer-copy.js && node --check v3/events.js && node tests/smoke.mjs",
     "test": "node tests/smoke.mjs"
   },
   "engines": {
