@@ -126,6 +126,10 @@ function setAllCollapsed(collapsed) {
   state.book.view.collapsedIds = collapsed
     ? [...collectCollapsibleIds(state.book.manuscript), ...collectCollapsibleIds(state.book.loose)]
     : [];
+  if (collapsed && state.book.view.selectedNodeId) {
+    const path = getPath(state.book.view.selectedNodeId);
+    if (path.length > 1) state.book.view.selectedNodeId = path[0].id;
+  }
   render();
   scheduleSave();
 }
@@ -157,4 +161,20 @@ function deleteNode(nodeId) {
     if (state.book.view.hoistedNodeId === nodeId) state.book.view.hoistedNodeId = null;
     state.book.view.collapsedIds = state.book.view.collapsedIds.filter((id) => id !== nodeId);
   }, { nodeId: state.book.view.selectedNodeId, field: state.book.view.mode === "write" ? "body" : "row", offset: 0 });
+}
+
+// UI v3 owns the visible version and keeps export choices task-oriented.
+function openMoreDialog() {
+  openModal(`
+    <div class="modal-header"><div><h2>書き出しと設定</h2><div class="modal-subtitle">形式を選んで原稿を保存・共有します。</div></div><button class="icon-button" data-modal-action="close">×</button></div>
+    <div class="option-grid">
+      <button class="option-card" data-modal-action="export-md">Markdownを書き出す</button>
+      <button class="option-card" data-modal-action="export-txt">本文テキストを書き出す</button>
+      <button class="option-card" data-modal-action="export-json">完全JSONを退避する</button>
+      <button class="option-card" data-modal-action="import">別の原稿を持ち込む</button>
+      <button class="option-card" data-modal-action="help">ショートカットを見る</button>
+      <button class="option-card" data-modal-action="undo">元に戻す</button>
+    </div>
+    <p class="privacy-note">myspines 0.3.0 ・ 原稿は外部へ送信されません。</p>
+  `);
 }
