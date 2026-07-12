@@ -3,21 +3,29 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#f7f5f0" />
-    <meta name="description" content="本の背骨を、急かさず育てる静かな編集机。" />
+    <meta name="theme-color" content="#f5f4ef" />
+    <meta name="description" content="段落を動かしながら、長い文章を書くためのエディタ。" />
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./v2/base.css" />
+    <link rel="stylesheet" href="./v2/editor.css" />
+    <link rel="stylesheet" href="./v2/overlays.css" />
+    <link rel="stylesheet" href="./v2/library.css" />
+    <link rel="stylesheet" href="./v2/responsive.css" />
     <title>myspines</title>
   </head>
   <body>
     <div id="app" aria-live="polite"></div>
     <script src="./core.js" defer></script>
     <script src="./commands.js" defer></script>
-    <script src="./ui.js" defer></script>
     <script src="./editor.js" defer></script>
-    <script src="./library.js" defer></script>
-    <script src="./transfer.js" defer></script>
+    <script src="./v2/model.js" defer></script>
+    <script src="./v2/ui-shell.js" defer></script>
+    <script src="./v2/ui-structure.js" defer></script>
+    <script src="./v2/library.js" defer></script>
+    <script src="./v2/transfer-import.js" defer></script>
+    <script src="./v2/transfer-copy.js" defer></script>
+    <script src="./v2/events.js" defer></script>
     <script src="./bootstrap.js" defer></script>
   </body>
 </html>
