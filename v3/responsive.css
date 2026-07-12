@@ -24,6 +24,13 @@
   }
   .write-shell.is-outline-open .outline-backdrop { display: block; }
   .outline-resizer { display: none; }
+  .global-header__right .save-status,
+  .global-header__right .icon-button { display: none; }
+  .structure-page { width: calc(100% - 28px); padding-top: 24px; }
+  .structure-layout { display: block; }
+  .structure-table-header,
+  .structure-row { grid-template-columns: 30px minmax(180px, 0.9fr) minmax(160px, 1.1fr) 78px; }
+  .selection-panel { position: static; margin-top: 16px; }
   .document-header { padding-inline: clamp(28px, 8vw, 78px); }
   .manuscript-region { padding-inline: clamp(28px, 8vw, 78px); }
   .document-status { padding-inline: clamp(28px, 8vw, 78px); }
