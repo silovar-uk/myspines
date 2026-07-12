@@ -1,8 +1,17 @@
 // UI v3 defaults: the outline supports a resizable desktop split and a tablet overlay.
+function preferredOutlineOpen() {
+  return typeof globalThis.innerWidth !== "number" || globalThis.innerWidth >= 1040;
+}
+
+function outlineMaxWidth() {
+  if (typeof globalThis.innerWidth !== "number" || globalThis.innerWidth < 1040) return 400;
+  return Math.min(400, Math.max(220, globalThis.innerWidth - 680));
+}
+
 function clampOutlineWidth(value) {
   const number = Number(value);
   if (!Number.isFinite(number)) return 288;
-  return Math.min(400, Math.max(220, Math.round(number)));
+  return Math.min(outlineMaxWidth(), Math.max(220, Math.round(number)));
 }
 
 function createBook(title = "無題の原稿", nodes = [createNode()]) {
@@ -16,9 +25,10 @@ function createBook(title = "無題の原稿", nodes = [createNode()]) {
       hoistedNodeId: null,
       selectedNodeId: nodes[0]?.id ?? null,
       collapsedIds: [],
-      outlineOpen: true,
+      outlineOpen: preferredOutlineOpen(),
       outlineWidth: 288,
       outlineMetrics: false,
+      outlinePresentationVersion: 3,
     },
     createdAt: now, updatedAt: now,
   };
@@ -42,9 +52,12 @@ function normalizeBook(raw) {
       ...fallback.view, ...(raw?.view ?? {}),
       selectedNodeId: raw?.view?.selectedNodeId ?? manuscript[0]?.id ?? null,
       collapsedIds: Array.isArray(raw?.view?.collapsedIds) ? raw.view.collapsedIds : [],
-      outlineOpen: raw?.view?.outlineOpen !== false,
+      outlineOpen: raw?.view?.outlinePresentationVersion === 3
+        ? raw?.view?.outlineOpen !== false
+        : preferredOutlineOpen(),
       outlineWidth: clampOutlineWidth(raw?.view?.outlineWidth),
       outlineMetrics: raw?.view?.outlineMetrics === true,
+      outlinePresentationVersion: 3,
     },
   };
 }
