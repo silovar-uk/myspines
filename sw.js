@@ -1,4 +1,4 @@
-const CACHE_NAME = "myspines-shell-v2";
+const CACHE_NAME = "myspines-shell-v3";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -6,19 +6,19 @@ const APP_SHELL = [
   "./commands.js",
   "./editor.js",
   "./bootstrap.js",
-  "./v2/model.js",
-  "./v2/ui-shell.js",
-  "./v2/ui-structure.js",
+  "./v3/model.js",
+  "./v3/ui-shell.js",
+  "./v3/ui-structure.js",
+  "./v3/events.js",
   "./v2/library.js",
   "./v2/transfer-import.js",
   "./v2/transfer-copy.js",
-  "./v2/events.js",
-  "./v2/base.css",
-  "./v2/editor.css",
+  "./v3/base.css",
+  "./v3/editor.css",
+  "./v3/responsive.css",
+  "./v3/dark.css",
   "./v2/overlays.css",
   "./v2/library.css",
-  "./v2/responsive.css",
-  "./v2/dark.css",
   "./favicon.svg",
   "./manifest.webmanifest",
 ];
@@ -39,9 +39,6 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET" || new URL(event.request.url).origin !== self.location.origin) return;
-
-  // Why not cache-first: 執筆中の原稿はIndexedDBにあり、アプリシェルだけは
-  // オンライン時に最新版へ追従した方が、古いUIを長く握り続けない。
   event.respondWith(
     fetch(event.request)
       .then((response) => {
