@@ -179,6 +179,7 @@ function scheduleSave({ immediate = false } = {}) {
     try {
       await putBook(snapshot);
       state.saveError = null;
+      renderSaveError();
       const index = state.books.findIndex((book) => book.id === snapshot.id);
       if (index >= 0) state.books[index] = snapshot;
       else state.books.push(snapshot);
