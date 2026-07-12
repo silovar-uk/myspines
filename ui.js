@@ -252,7 +252,23 @@ function attachCoreListeners() {
   const manuscript = document.querySelector(".manuscript");
   if (manuscript) attachEditorListeners(manuscript);
   document.querySelectorAll(".node-heading").forEach((input) => {
-    input.addEventListener("beforeinput", () => beginInputHistory(input.dataset.nodeId, "heading"));
+    input.addEventListener("compositionstart", () => {
+      state.composing = true;
+      if (!state.compositionCaptured) {
+        pushHistory("日本語入力");
+        state.compositionCaptured = true;
+        state.inputGroup = { nodeId: input.dataset.nodeId, field: "heading", time: Date.now() };
+      }
+    });
+    input.addEventListener("compositionend", () => {
+      state.composing = false;
+      state.compositionCaptured = false;
+      state.inputGroup = null;
+    });
+    input.addEventListener("beforeinput", (event) => {
+      if (state.composing || event.isComposing || event.inputType === "insertCompositionText") return;
+      beginInputHistory(input.dataset.nodeId, "heading");
+    });
     input.addEventListener("input", () => {
       const node = findNode(input.dataset.nodeId);
       if (!node) return;
