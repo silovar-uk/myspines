@@ -1,15 +1,23 @@
-const CACHE_NAME = "myspines-shell-v1";
+const CACHE_NAME = "myspines-shell-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css",
   "./core.js",
   "./commands.js",
-  "./ui.js",
   "./editor.js",
-  "./library.js",
-  "./transfer.js",
   "./bootstrap.js",
+  "./v2/model.js",
+  "./v2/ui-shell.js",
+  "./v2/ui-structure.js",
+  "./v2/library.js",
+  "./v2/transfer-import.js",
+  "./v2/transfer-copy.js",
+  "./v2/events.js",
+  "./v2/base.css",
+  "./v2/editor.css",
+  "./v2/overlays.css",
+  "./v2/library.css",
+  "./v2/responsive.css",
   "./favicon.svg",
   "./manifest.webmanifest",
 ];
