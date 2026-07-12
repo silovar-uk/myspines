@@ -170,14 +170,18 @@ function scheduleSave({ immediate = false } = {}) {
   if (!state.book) return;
   state.book.updatedAt = nowIso();
   clearTimeout(state.saveTimer);
+
+  // Why not read state.book inside the delayed callback: a user can switch books
+  // before the debounce expires. Capture the intended manuscript now so one book
+  // can never be silently written under another book's save cycle.
+  const snapshot = deepClone(state.book);
   const save = async () => {
     try {
-      await putBook(state.book);
+      await putBook(snapshot);
       state.saveError = null;
-      const index = state.books.findIndex((book) => book.id === state.book.id);
-      const copy = deepClone(state.book);
-      if (index >= 0) state.books[index] = copy;
-      else state.books.push(copy);
+      const index = state.books.findIndex((book) => book.id === snapshot.id);
+      if (index >= 0) state.books[index] = snapshot;
+      else state.books.push(snapshot);
       state.books.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
     } catch (error) {
       state.saveError = error instanceof Error ? error.message : "保存できていません。";
