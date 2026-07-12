@@ -18,6 +18,7 @@ const APP_SHELL = [
   "./v2/overlays.css",
   "./v2/library.css",
   "./v2/responsive.css",
+  "./v2/dark.css",
   "./favicon.svg",
   "./manifest.webmanifest",
 ];
