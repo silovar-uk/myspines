@@ -1,5 +1,8 @@
 function totalNodeCount(nodes = state.book?.manuscript ?? []) {
-  return nodes.reduce((sum, node) => sum + 1 + totalNodeCount(node.children), 0);
+  return nodes.reduce(
+    (sum, node) => sum + 1 + totalNodeCount(node.children),
+    0,
+  );
 }
 
 function updateQuietStatus() {
@@ -9,11 +12,17 @@ function updateQuietStatus() {
   const total = bookCharacters();
   const count = totalNodeCount();
   if (count === 1 && total < 80) {
-    status.textContent = "Enter　次の段落 ｜ Shift + Enter　段落内で改行";
+    status.textContent =
+      "Enter　段落内で改行 ｜ Ctrl / ⌘ + Enter　次の段落";
     return;
   }
-  if (count <= 3 && total < 500 && !state.book.manuscript.some((item) => item.children.length)) {
-    status.textContent = "Tab　一段深くする ｜ Ctrl / ⌘ + Shift + O　構造を見る";
+  if (
+    count <= 3 &&
+    total < 500 &&
+    !state.book.manuscript.some((item) => item.children.length)
+  ) {
+    status.textContent =
+      "Tab　一段深くする ｜ Ctrl / ⌘ + Shift + O　構成を見る";
     return;
   }
   const local = node ? subtreeCharacters(node) : 0;
@@ -32,7 +41,12 @@ function renderSaveError() {
 
 function formatDate(iso) {
   try {
-    return new Intl.DateTimeFormat("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(iso));
+    return new Intl.DateTimeFormat("ja-JP", {
+      month: "numeric",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(new Date(iso));
   } catch {
     return "";
   }
@@ -40,7 +54,10 @@ function formatDate(iso) {
 
 function handleGlobalKeydown(event) {
   if (state.modal && event.key === "Escape") return closeModal();
-  if (event.key === "Escape" && state.book?.view.marginOpen) return closeMargin();
+  if (event.key === "Escape" && state.paragraphMenuNodeId)
+    return closeParagraphMenu();
+  if (event.key === "Escape" && state.book?.view.memoOpen)
+    return closeMargin();
   if (!state.book || event.isComposing || state.composing) return;
   const command = event.metaKey || event.ctrlKey;
   if (command && event.key.toLowerCase() === "z") {
@@ -55,7 +72,7 @@ function handleGlobalKeydown(event) {
   }
   if (command && event.shiftKey && event.key.toLowerCase() === "m") {
     event.preventDefault();
-    state.book.view.marginOpen ? closeMargin() : openMargin();
+    state.book.view.memoOpen ? closeMargin() : openMargin();
     return;
   }
   if (command && event.altKey && event.key.toLowerCase() === "c") {
@@ -77,7 +94,10 @@ function handleGlobalKeydown(event) {
     unhoist(parent);
     return;
   }
-  if (command && (event.key === "?" || (event.shiftKey && event.key === "/"))) {
+  if (
+    command &&
+    (event.key === "?" || (event.shiftKey && event.key === "/"))
+  ) {
     event.preventDefault();
     openHelpDialog();
   }
@@ -87,7 +107,10 @@ async function init() {
   try {
     state.books = await listBooks();
   } catch (error) {
-    state.saveError = error instanceof Error ? error.message : "保存領域を開けませんでした。";
+    state.saveError =
+      error instanceof Error
+        ? error.message
+        : "保存領域を開けませんでした。";
   }
   const lastBookId = localStorage.getItem(LAST_BOOK_KEY);
   const lastBook = state.books.find((book) => book.id === lastBookId);
