@@ -1,4 +1,4 @@
-const CACHE_NAME = "myspines-shell-v4-refined-2";
+const CACHE_NAME = "myspines-shell-v4-material";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -24,6 +24,7 @@ const APP_SHELL = [
   "./v4/density.css",
   "./v4/dark.css",
   "./v4/refinements.css",
+  "./v4/materiality.css",
   "./favicon.svg",
   "./manifest.webmanifest",
 ];
