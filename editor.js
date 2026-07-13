@@ -1,7 +1,11 @@
 function attachEditorListeners(manuscript) {
   manuscript.addEventListener("focusin", (event) => {
     const body = event.target.closest?.(".node-body");
-    if (body) setSelectedNode(body.dataset.nodeId);
+    if (!body) return;
+    setSelectedNode(body.dataset.nodeId);
+    if (typeof refreshMemoNodeField === "function") {
+      refreshMemoNodeField(body.dataset.nodeId);
+    }
   });
 
   manuscript.addEventListener("compositionstart", (event) => {
@@ -11,7 +15,11 @@ function attachEditorListeners(manuscript) {
     if (!state.compositionCaptured) {
       pushHistory("日本語入力");
       state.compositionCaptured = true;
-      state.inputGroup = { nodeId: body.dataset.nodeId, field: "body", time: Date.now() };
+      state.inputGroup = {
+        nodeId: body.dataset.nodeId,
+        field: "body",
+        time: Date.now(),
+      };
     }
   });
 
@@ -28,25 +36,51 @@ function attachEditorListeners(manuscript) {
     if (!body) return;
     const nodeId = body.dataset.nodeId;
     const selection = getSelectionOffsets(body);
-    if ((event.inputType === "historyUndo" || event.inputType === "historyRedo") && !state.composing) {
+
+    if (
+      (event.inputType === "historyUndo" ||
+        event.inputType === "historyRedo") &&
+      !state.composing
+    ) {
       event.preventDefault();
       event.inputType === "historyUndo" ? undo() : redo();
       return;
     }
-    if (state.composing || event.isComposing || event.inputType === "insertCompositionText") return;
-    if (event.inputType === "insertParagraph") {
+
+    if (
+      state.composing ||
+      event.isComposing ||
+      event.inputType === "insertCompositionText"
+    )
+      return;
+
+    if (
+      event.inputType === "insertParagraph" ||
+      event.inputType === "insertLineBreak"
+    ) {
       event.preventDefault();
-      splitNode(nodeId, selection?.start ?? body.textContent.length);
+      insertSoftBreak(body, nodeId, selection);
       return;
     }
-    if (event.inputType === "deleteContentBackward" && selection?.collapsed && selection.start === 0) {
+
+    if (
+      event.inputType === "deleteContentBackward" &&
+      selection?.collapsed &&
+      selection.start === 0
+    ) {
       if (joinBackward(nodeId)) event.preventDefault();
       return;
     }
-    if (event.inputType === "deleteContentForward" && selection?.collapsed && selection.start === body.textContent.length) {
+
+    if (
+      event.inputType === "deleteContentForward" &&
+      selection?.collapsed &&
+      selection.start === body.textContent.length
+    ) {
       if (joinForward(nodeId)) event.preventDefault();
       return;
     }
+
     beginInputHistory(nodeId, "body");
   });
 
@@ -72,16 +106,26 @@ function attachEditorListeners(manuscript) {
     const body = event.target.closest?.(".node-body");
     if (!body || event.isComposing || state.composing) return;
     const nodeId = body.dataset.nodeId;
+
+    if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+      event.preventDefault();
+      const selection = getSelectionOffsets(body);
+      splitNode(nodeId, selection?.start ?? body.textContent.length);
+      return;
+    }
+
     if (event.key === "Tab") {
       event.preventDefault();
       event.shiftKey ? outdentNode(nodeId) : indentNode(nodeId);
       return;
     }
+
     if (event.altKey && event.shiftKey && event.key === "ArrowUp") {
       event.preventDefault();
       moveNode(nodeId, -1);
       return;
     }
+
     if (event.altKey && event.shiftKey && event.key === "ArrowDown") {
       event.preventDefault();
       moveNode(nodeId, 1);
@@ -89,67 +133,34 @@ function attachEditorListeners(manuscript) {
   });
 }
 
+function insertSoftBreak(body, nodeId, selection) {
+  const node = findNode(nodeId);
+  if (!node) return;
+  const start = Math.max(
+    0,
+    Math.min(selection?.start ?? node.body.length, node.body.length),
+  );
+  const end = Math.max(
+    start,
+    Math.min(selection?.end ?? start, node.body.length),
+  );
+
+  beginInputHistory(nodeId, "body");
+  node.body = `${node.body.slice(0, start)}\n${node.body.slice(end)}`;
+  state.book.view.selectedNodeId = nodeId;
+  render();
+  restoreFocus({ nodeId, field: "body", offset: start + 1 });
+  scheduleSave();
+}
+
 function syncBodyFromElement(body) {
   const node = findNode(body.dataset.nodeId);
   if (!node) return;
   node.body = body.innerText.replace(/\r\n?/g, "\n");
   setSelectedNode(node.id);
+  if (typeof refreshMemoNodeField === "function") {
+    refreshMemoNodeField(node.id);
+  }
   scheduleSave();
   updateQuietStatus();
-}
-
-function handleClick(event) {
-  const target = event.target.closest?.("[data-action]");
-  if (!target) return;
-  const action = target.dataset.action;
-  const nodeId = target.dataset.nodeId;
-  if (action === "new-book") return createAndOpenBook();
-  if (action === "import") return openImportDialog();
-  if (action === "open-book") return openBook(target.dataset.bookId);
-  if (action === "delete-book") return deleteBookFromLibrary(target.dataset.bookId);
-  if (action === "library") return openLibraryDialog();
-  if (action === "mode-write") return toggleMode("write");
-  if (action === "mode-shape") return toggleMode("shape");
-  if (action === "lens-explore") return setLens("explore");
-  if (action === "lens-refine") return setLens("refine");
-  if (action === "toggle-collapse") return toggleCollapsed(nodeId);
-  if (action === "add-heading") return revealHeading(nodeId);
-  if (action === "select-node") {
-    setSelectedNode(nodeId);
-    render();
-    restoreFocus({ nodeId, field: "row", offset: 0 });
-    return;
-  }
-  if (action === "focus-node") return hoistNode(nodeId);
-  if (action === "unhoist") return unhoist(target.dataset.nodeId || null);
-  if (action === "move-up") return moveNode(nodeId, -1);
-  if (action === "move-down") return moveNode(nodeId, 1);
-  if (action === "indent") return indentNode(nodeId);
-  if (action === "outdent") return outdentNode(nodeId);
-  if (action === "duplicate") return duplicateNode(nodeId);
-  if (action === "delete-node") return deleteNode(nodeId);
-  if (action === "move-loose") return moveToLoose(nodeId);
-  if (action === "return-manuscript") return returnToManuscript(nodeId);
-  if (action === "new-root") return addRootNode();
-  if (action === "copy-node") return quickCopyNode(nodeId);
-  if (action === "copy") return openCopyDialog(nodeId || getCurrentNodeId());
-  if (action === "margin") return openMargin();
-  if (action === "close-margin") return closeMargin();
-  if (action === "more") return openMoreDialog();
-  if (action === "help") return openHelpDialog();
-}
-
-function revealHeading(nodeId) {
-  const input = document.querySelector(`.node-heading[data-node-id="${CSS.escape(nodeId)}"]`);
-  if (!input) return;
-  input.classList.add("is-revealed");
-  input.focus();
-}
-
-function addRootNode() {
-  const node = createNode();
-  mutateStructure("章・段落を追加", () => {
-    state.book.manuscript.push(node);
-    state.book.view.selectedNodeId = node.id;
-  }, { nodeId: node.id, field: "row", offset: 0 });
 }
