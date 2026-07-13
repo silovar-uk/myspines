@@ -9,6 +9,6 @@ function openMoreDialog() {
       <button class="option-card" data-modal-action="help">ショートカットを見る</button>
       <button class="option-card" data-modal-action="undo">元に戻す</button>
     </div>
-    <p class="privacy-note">myspines 0.4.3 ・ 原稿は外部へ送信されません。</p>
+    <p class="privacy-note">myspines 0.4.4 ・ 原稿は外部へ送信されません。</p>
   `);
 }
