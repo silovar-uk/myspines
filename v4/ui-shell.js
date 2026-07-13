@@ -121,7 +121,7 @@ function renderWriteMode() {
     <button class="outline-backdrop" data-action="close-outline" aria-label="アウトラインを閉じる"></button>
     <aside class="outline-pane" aria-label="アウトライン">
       ${renderOutlinePanel()}
-      <div class="outline-resizer" data-outline-resizer role="separator" tabindex="0" aria-label="アウトラインの幅" aria-orientation="vertical" aria-valuemin="220" aria-valuemax="380" aria-valuenow="${outlineWidth}"></div>
+      <div class="outline-resizer" data-outline-resizer role="separator" tabindex="0" aria-label="アウトラインの幅" aria-orientation="vertical" aria-valuemin="200" aria-valuemax="340" aria-valuenow="${outlineWidth}"></div>
     </aside>
     <main class="document-pane">
       <header class="document-header">
