@@ -1,4 +1,4 @@
-const CACHE_NAME = "myspines-shell-v3";
+const CACHE_NAME = "myspines-shell-v4";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -6,19 +6,19 @@ const APP_SHELL = [
   "./commands.js",
   "./editor.js",
   "./bootstrap.js",
-  "./v3/model.js",
-  "./v3/ui-shell.js",
-  "./v3/ui-structure.js",
-  "./v3/events.js",
+  "./v4/model.js",
+  "./v4/ui-shell.js",
+  "./v4/ui-structure.js",
+  "./v4/events.js",
   "./v2/library.js",
   "./v2/transfer-import.js",
   "./v2/transfer-copy.js",
-  "./v3/base.css",
-  "./v3/editor.css",
-  "./v3/responsive.css",
-  "./v3/dark.css",
+  "./v4/base.css",
+  "./v4/editor.css",
   "./v2/overlays.css",
   "./v2/library.css",
+  "./v4/responsive.css",
+  "./v4/dark.css",
   "./favicon.svg",
   "./manifest.webmanifest",
 ];
@@ -31,14 +31,21 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))),
+      Promise.all(
+        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)),
+      ),
     ),
   );
   self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
-  if (event.request.method !== "GET" || new URL(event.request.url).origin !== self.location.origin) return;
+  if (
+    event.request.method !== "GET" ||
+    new URL(event.request.url).origin !== self.location.origin
+  )
+    return;
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
@@ -46,6 +53,10 @@ self.addEventListener("fetch", (event) => {
         caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
         return response;
       })
-      .catch(() => caches.match(event.request).then((cached) => cached || caches.match("./index.html"))),
+      .catch(() =>
+        caches
+          .match(event.request)
+          .then((cached) => cached || caches.match("./index.html")),
+      ),
   );
 });
