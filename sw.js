@@ -1,4 +1,4 @@
-const CACHE_NAME = "myspines-shell-v4-material";
+const CACHE_NAME = "myspines-shell-v4-character-counts";
 const APP_SHELL = [
   "./",
   "./index.html",
