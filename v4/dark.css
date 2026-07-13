@@ -1,0 +1,28 @@
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --page: #1e1f1f;
+    --surface: #292a29;
+    --surface-muted: #353632;
+    --surface-subtle: #30312f;
+    --ink: #efeee9;
+    --muted: #aaa79f;
+    --faint: #85827b;
+    --line: #494a46;
+    --line-strong: #5b5b56;
+    --accent: #d47d56;
+    --accent-hover: #e08a63;
+    --accent-soft: #4b342a;
+    --danger: #e18b82;
+    --danger-soft: #4c2c2a;
+    --shadow: 0 16px 42px rgba(0, 0, 0, 0.38);
+  }
+  .secondary-button { color: var(--ink); background: #373834; }
+  .sidebar-row:hover { background: #373733; }
+  .sidebar-label, .structure-title, .library-title { color: var(--ink); }
+  .manuscript { color: #e8e6df; }
+  .structure-row { border-bottom-color: #3e3f3b; }
+  .structure-row.is-selected { background: #443127; }
+  .memo-pane .text-input, .memo-pane .textarea { color: var(--ink); background: #292a29; }
+  .save-error { color: #ffd2ce; border-color: #6f3935; background: #442826; }
+}
