@@ -1,7 +1,7 @@
 {
   "name": "myspines",
   "private": true,
-  "version": "0.4.2",
+  "version": "0.4.3",
   "type": "module",
   "scripts": {
     "check": "node --check core.js && node --check commands.js && node --check editor.js && node --check bootstrap.js && node --check v4/model.js && node --check v4/model-refinements.js && node --check v4/ui-shell.js && node --check v4/ui-structure.js && node --check v4/refinements.js && node --check v4/events.js && node --check v4/version.js && node --check v2/library.js && node --check v2/transfer-import.js && node --check v2/transfer-copy.js && node --check sw.js && node tests/smoke.mjs",
