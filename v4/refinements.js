@@ -27,7 +27,7 @@ function renderWriteMode() {
             <div class="title-meta">
               <span class="title-character-count">タイトル ${countCharacters(state.book.title).toLocaleString("ja-JP")}字</span>
               <span aria-hidden="true">・</span>
-              <span>本文 ${bookCharacters().toLocaleString("ja-JP")}字</span>
+              <span class="body-character-count">本文 ${bookCharacters().toLocaleString("ja-JP")}字</span>
               <span aria-hidden="true">・</span>
               <span>${totalNodeCount()}項目</span>
             </div>
@@ -123,6 +123,11 @@ function updateMetadataCharacterCount(target) {
       `[data-heading-count-for="${CSS.escape(target.dataset.nodeId)}"]`,
     );
     if (counter) counter.textContent = `${countCharacters(target.value).toLocaleString("ja-JP")}字`;
+    return;
+  }
+  if (target.classList.contains("node-body")) {
+    const counter = document.querySelector(".body-character-count");
+    if (counter) counter.textContent = `本文 ${bookCharacters().toLocaleString("ja-JP")}字`;
   }
 }
 
