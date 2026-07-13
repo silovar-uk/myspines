@@ -1,4 +1,4 @@
-const CACHE_NAME = "myspines-shell-v4-refined";
+const CACHE_NAME = "myspines-shell-v4-refined-2";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -12,6 +12,7 @@ const APP_SHELL = [
   "./v4/ui-structure.js",
   "./v4/refinements.js",
   "./v4/events.js",
+  "./v4/version.js",
   "./v2/library.js",
   "./v2/transfer-import.js",
   "./v2/transfer-copy.js",
