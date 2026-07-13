@@ -1,11 +1,11 @@
 {
   "name": "myspines",
   "short_name": "myspines",
-  "description": "本の背骨を、急かさず育てる静かな編集机。",
+  "description": "長い文章を、構造を見ながら書くローカルファーストエディタ。",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f7f5f0",
-  "theme_color": "#f7f5f0",
+  "background_color": "#ece2cf",
+  "theme_color": "#ece2cf",
   "icons": [
     {
       "src": "./favicon.svg",
