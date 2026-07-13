@@ -24,7 +24,13 @@ function renderWriteMode() {
         <div class="document-axis">
           <input class="book-title-input" value="${escapeHtml(state.book.title)}" aria-label="原稿のタイトル" />
           <div class="document-meta-row">
-            <div class="title-meta">${bookCharacters().toLocaleString("ja-JP")}字 ・ ${totalNodeCount()}項目</div>
+            <div class="title-meta">
+              <span class="title-character-count" aria-live="polite">タイトル ${countCharacters(state.book.title).toLocaleString("ja-JP")}字</span>
+              <span aria-hidden="true">・</span>
+              <span>本文 ${bookCharacters().toLocaleString("ja-JP")}字</span>
+              <span aria-hidden="true">・</span>
+              <span>${totalNodeCount()}項目</span>
+            </div>
             <div class="document-meta-actions">
               ${renderHeadingNumberControl()}
               <button class="text-button" data-action="new-root">＋ 項目を追加</button>
@@ -49,6 +55,7 @@ function renderWriteNode(node, depth) {
   const hasHeading = Boolean(node.heading.trim());
   const showNumber = state.book.view.showHeadingNumbers !== false;
   const number = outlineNumberForNode(node.id);
+  const headingCharacters = countCharacters(node.heading);
 
   return `
     <section class="manuscript-node ${hasHeading ? "has-heading" : ""}" data-node-id="${node.id}" data-depth="${Math.min(depth, 5)}">
@@ -60,6 +67,7 @@ function renderWriteNode(node, depth) {
       <div class="node-heading-row ${showNumber ? "" : "is-numberless"}">
         ${showNumber && number ? `<span class="node-heading-number" aria-hidden="true">${number}</span>` : ""}
         <input class="node-heading ${hasHeading ? "" : "is-empty"}" data-node-id="${node.id}" value="${escapeHtml(node.heading)}" placeholder="見出し（任意）" aria-label="見出し（任意）" />
+        <span class="heading-character-count" data-heading-count-for="${node.id}" aria-live="polite">${headingCharacters.toLocaleString("ja-JP")}字</span>
       </div>
       <div class="node-body" data-node-id="${node.id}" contenteditable="plaintext-only" role="textbox" aria-multiline="true" spellcheck="true" lang="ja" data-placeholder="${node.body ? "" : "本文を書く"}"></div>
       ${collapsed && childCount ? `<button class="collapsed-summary" data-action="toggle-collapse" data-node-id="${node.id}">配下${childCount}件を表示</button>` : ""}
@@ -103,6 +111,21 @@ function toggleHeadingNumbers() {
   scheduleSave();
 }
 
+function updateMetadataCharacterCount(target) {
+  if (!target || !state.book) return;
+  if (target.classList.contains("book-title-input")) {
+    const counter = document.querySelector(".title-character-count");
+    if (counter) counter.textContent = `タイトル ${countCharacters(target.value).toLocaleString("ja-JP")}字`;
+    return;
+  }
+  if (target.classList.contains("node-heading")) {
+    const counter = document.querySelector(
+      `[data-heading-count-for="${CSS.escape(target.dataset.nodeId)}"]`,
+    );
+    if (counter) counter.textContent = `${countCharacters(target.value).toLocaleString("ja-JP")}字`;
+  }
+}
+
 function handleRefinementAction(event) {
   const target = event.target.closest?.('[data-action="toggle-heading-numbers"]');
   if (!target) return;
@@ -110,7 +133,12 @@ function handleRefinementAction(event) {
   toggleHeadingNumbers();
 }
 
+function handleRefinementInput(event) {
+  updateMetadataCharacterCount(event.target);
+}
+
 if (!app.dataset.refinementBound) {
   app.addEventListener("click", handleRefinementAction);
+  app.addEventListener("input", handleRefinementInput);
   app.dataset.refinementBound = "true";
 }
