@@ -1,12 +1,14 @@
-// UI v4 defaults: numbered outlines and a collapsible right-side memo pane.
+// UI v4 defaults: numbered outlines, a collapsible memo pane, and a compact writing layout.
+const LAYOUT_DENSITY_VERSION = 1;
+
 function clampOutlineWidth(value) {
   const number = Number(value);
-  if (!Number.isFinite(number)) return 280;
-  return Math.min(380, Math.max(220, Math.round(number)));
+  if (!Number.isFinite(number)) return 248;
+  return Math.min(340, Math.max(200, Math.round(number)));
 }
 
 function defaultMemoOpen() {
-  return typeof window === "undefined" ? true : window.innerWidth >= 1280;
+  return typeof window === "undefined" ? true : window.innerWidth >= 1440;
 }
 
 function createBook(title = "無題の原稿", nodes = [createNode()]) {
@@ -28,8 +30,9 @@ function createBook(title = "無題の原稿", nodes = [createNode()]) {
       selectedNodeId: nodes[0]?.id ?? null,
       collapsedIds: [],
       outlineOpen: true,
-      outlineWidth: 280,
+      outlineWidth: 248,
       memoOpen: defaultMemoOpen(),
+      layoutDensityVersion: LAYOUT_DENSITY_VERSION,
     },
     createdAt: now,
     updatedAt: now,
@@ -41,6 +44,12 @@ function normalizeBook(raw) {
   const manuscript = Array.isArray(raw?.manuscript) && raw.manuscript.length
     ? raw.manuscript.map(normalizeNode)
     : fallback.manuscript;
+  const usesCompactLayout =
+    raw?.view?.layoutDensityVersion === LAYOUT_DENSITY_VERSION;
+  const previousOutlineWidth = Number(raw?.view?.outlineWidth);
+  const migratedOutlineWidth = Number.isFinite(previousOutlineWidth)
+    ? Math.min(previousOutlineWidth, 260)
+    : fallback.view.outlineWidth;
 
   return {
     ...fallback,
@@ -70,11 +79,14 @@ function normalizeBook(raw) {
         ? raw.view.collapsedIds
         : [],
       outlineOpen: raw?.view?.outlineOpen !== false,
-      outlineWidth: clampOutlineWidth(raw?.view?.outlineWidth),
+      outlineWidth: usesCompactLayout
+        ? clampOutlineWidth(raw?.view?.outlineWidth)
+        : clampOutlineWidth(migratedOutlineWidth),
       memoOpen:
-        typeof raw?.view?.memoOpen === "boolean"
+        usesCompactLayout && typeof raw?.view?.memoOpen === "boolean"
           ? raw.view.memoOpen
           : defaultMemoOpen(),
+      layoutDensityVersion: LAYOUT_DENSITY_VERSION,
     },
   };
 }
